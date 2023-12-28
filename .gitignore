@@ -1,2 +1,5 @@
 plot/
-plot2/
+plot2/*
+tmp.py
+tmp2.py
+*.pth
