@@ -3,3 +3,5 @@ plot2/*
 tmp.py
 tmp2.py
 *.pth
+coo_dataset/
+csr_dataset/
