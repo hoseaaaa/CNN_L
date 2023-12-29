@@ -23,7 +23,7 @@ def generate_coo_sparse_matrix(filename, size, density):
         file.write(" ".join(map(str, values)) + "\n")
 
 # 生成1到10个COO格式的稀疏矩阵文件
-for i in range(1, 11):
+for i in range(1, 101):
     filename = f"./coo_dataset/{i}.txt"
     size = np.random.randint(28, 29)  # 随机生成矩阵的大小
     density = np.random.uniform(0.1, 0.5)  # 随机生成稀疏度
