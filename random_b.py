@@ -8,10 +8,12 @@ def clear_directory(directory):
             file_path = os.path.join(directory, filename)
             os.remove(file_path)
 
-def generate_and_save_matrices(directory, m, n):
+def generate_and_save_matrices(directory, m, n, data_range=(0, 1)):
     for i in range(1, m + 1):
         filename = os.path.join(directory, f"{i}.txt")
-        matrix = np.random.rand(1, n)
+        
+        # Generate random matrix within the specified range
+        matrix = np.random.uniform(data_range[0], data_range[1], size=(1, n))
 
         # Save matrix to file
         with open(filename, "w") as file:
@@ -21,8 +23,10 @@ def generate_and_save_matrices(directory, m, n):
 # Clear existing files
 clear_directory("./b_dataset")
 
-# Generate and save matrices
-m = 100  # You can change this to the desired number of matrices
-n = 28   # You can change this to the desired number of columns
-generate_and_save_matrices("./b_dataset", m, n)
+# Generate and save matrices with specified data range
+m = 40  # You can change this to the desired number of matrices
+n = 10000   # You can change this to the desired number of columns
+data_min = 100  # Specify the minimum value for random data
+data_max = 1000  # Specify the maximum value for random data
+generate_and_save_matrices("./b_dataset", m, n, data_range=(data_min, data_max))
 print(f"{m} matrices saved successfully in the b_dataset directory.")
