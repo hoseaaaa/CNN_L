@@ -4,3 +4,4 @@ tmp2.py
 *.info
 *.png
 tmp/
+target.txt

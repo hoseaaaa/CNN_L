@@ -43,11 +43,13 @@ class COODataset(Dataset):
     def __init__(self, file_prefix, num_samples):
         self.file_prefix = file_prefix
         self.num_samples = num_samples
-        self.target_filename = f"./{self.file_prefix}/target.txt"
+        self.target_filename = f"./target.txt"
         self.targets = self.load_targets()
     def load_targets(self):
+        targets = []
         with open(self.target_filename, 'r') as target_file:
-            targets = list(map(float, target_file.readline().split()))
+            for line in target_file:
+                targets.extend(map(float, line.split()))
         return targets
 
     def __len__(self):
