@@ -76,11 +76,20 @@ class COODataset(Dataset):
 
         return dense_matrix.unsqueeze(0)
 
+def load_model(model, filepath):
+    # Load the saved model
+    model.load_state_dict(torch.load(filepath))
+    model.eval()  # Set the model to evaluation mode
+
+def inference(model, val_loader,loss_function):
+    # Inference using the model
+    
+
 
 if __name__ == '__main__':
     #建立数据集
     file_prefix = "coo_dataset"
-    num_samples = 5
+    num_samples = 40
     
     coo_dataset = COODataset(file_prefix, num_samples)
     # torch_dataset = TensorDataset(coo_dataset , coo_dataset.targets)
@@ -104,8 +113,8 @@ if __name__ == '__main__':
         
     # 模型训练
     losses = []
-    
-    for epoch in range(1000):
+    #train model
+    for epoch in range(10):
         for _, (coo_matrix, target) in enumerate(data_loader):
             input_data = coo_matrix
             optimizer.zero_grad()
@@ -115,6 +124,7 @@ if __name__ == '__main__':
             optimizer.step()
         losses.append(loss.item())
         print(f"Epoch {epoch + 1}/{100}, Loss: {loss.item()}")
+    torch.save(model.state_dict(), 'AMG_trained_model.pth')  # 保存模型状态
 
     # 绘制变化曲线
     plt.plot(losses, label='Training Loss')
@@ -124,3 +134,5 @@ if __name__ == '__main__':
 
     # 保存绘图
     plt.savefig('training_curve.png')
+    # loaded_net = Cnn()
+    # load_model(loaded_net, 'AMG_trained_model.pth')
