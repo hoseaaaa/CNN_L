@@ -5,3 +5,4 @@ tmp2.py
 *.png
 tmp/
 target.txt
+__pycache__/
