@@ -76,20 +76,6 @@ class COODataset(Dataset):
 
         return dense_matrix.unsqueeze(0)
 
-def generate_dense_matrix(density=0.4):
-    # 创建一个28x28的零矩阵
-    dense_matrix = torch.zeros((28, 28), dtype=torch.float32)
-    
-    # 计算需要设置为非零值的元素数量
-    num_non_zero_elements = int(density * 28 * 28)
-    
-    # 生成随机位置并设置为非零值
-    for _ in range(num_non_zero_elements):
-        i, j = random.randint(0, 27), random.randint(0, 27)
-        dense_matrix[i, j] = random.uniform(1, 10)
-    
-    return dense_matrix
-
 
 if __name__ == '__main__':
     #建立数据集

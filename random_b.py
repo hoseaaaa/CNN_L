@@ -24,7 +24,7 @@ def generate_and_save_matrices(directory, m, n, data_range=(0, 1)):
 clear_directory("./b_dataset")
 
 # Generate and save matrices with specified data range
-m = 40  # You can change this to the desired number of matrices
+m = 100  # You can change this to the desired number of matrices
 n = 28   # You can change this to the desired number of columns
 data_min = 100  # Specify the minimum value for random data
 data_max = 1000  # Specify the maximum value for random data
