@@ -44,10 +44,10 @@ clear_directory("./coo_dataset")
 clear_directory("./csr_dataset")
 
 # Generate new files
-for i in range(1, 41):
+for i in range(1, 21):
     coo_filename = f"./coo_dataset/{i}.txt"
     csr_filename = f"./csr_dataset/{i}.txt"
-    size = np.random.randint(1000, 1001)
-    density = np.random.uniform(0.1, 0.3)
+    size = np.random.randint(1000, 2001)
+    density = np.random.uniform(0.1, 0.2)
     generate_sparse_matrices(coo_filename, csr_filename, size, density)
     print(f"Files saved successfully: {coo_filename}, {csr_filename}")

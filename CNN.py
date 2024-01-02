@@ -151,7 +151,7 @@ def test(model, test_loader, criterion):
 if __name__ == '__main__':
     #建立数据集
     file_prefix = "coo_dataset"
-    num_samples = 40
+    num_samples = 20
     coo_dataset = COODataset(file_prefix, num_samples)
 
     #划分数据集
