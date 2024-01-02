@@ -4,12 +4,12 @@ import torch.optim as optim
 
 import random
 
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader,random_split
 from torch.utils.data import TensorDataset
 import matplotlib.pyplot as plt
 
 class Cnn(nn.Module):
-    def __init__(self, out_node):
+    def __init__(self, out_node=1):
         super(Cnn, self).__init__()
         # self.embedding = nn.EmbeddingBag.from_pretrained(30, 10, sparse=True)
         self.conv = nn.Sequential(
@@ -83,28 +83,94 @@ def load_model(model, filepath):
 
 def inference(model, val_loader,loss_function):
     # Inference using the model
+    return 0
+
+
+def train_model(model, train_loader, criterion, optimizer, num_epochs=100):
+    losses = []
+    for epoch in range(num_epochs):
+        for _, (coo_matrix, target) in enumerate(train_loader):
+            input_data = coo_matrix
+            optimizer.zero_grad()
+            output = model(input_data)
+            loss = criterion(output, target)
+            loss.backward()
+            optimizer.step()
+
+        losses.append(loss.item())
+        print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {loss.item()}")
+
+        # 保存模型状态
+        # torch.save(model.state_dict(), f'AMG_trained_model_epoch_{epoch + 1}.pth')
+    # 保存模型状态
+    torch.save(model.state_dict(), 'AMG_trained_model.pth')  # 保存模型状态
+    #绘制变化曲线
+    plt.plot(losses, label='Training Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    # 保存绘图
+    plt.savefig('training_curve.png')
+
+def validate(model, val_loader, criterion):
+    model.eval()
+    total_loss = 0.0
+    with torch.no_grad():
+        for _, (coo_matrix, target) in enumerate(val_loader):
+            output = model(coo_matrix)
+            loss = criterion(output, target)
+            total_loss += loss.item()
+    avg_loss = total_loss / len(val_loader)
+    return avg_loss
+
+def test(model, test_loader, criterion):
+    model.eval()
+    total_loss = 0.0
+    with torch.no_grad():
+        for _, (coo_matrix, target) in enumerate(test_loader):
+            output = model(coo_matrix)
+            loss = criterion(output, target)
+            total_loss += loss.item()
+    avg_loss = total_loss / len(test_loader)
+
+    # 如果需要可视化，你可以绘制测试集上的预测结果和实际目标值
+    # 这里简单绘制第一个样本的预测结果和目标值
+    with torch.no_grad():
+        sample_coo, sample_target = test_dataset[0]
+        sample_output = model(sample_coo.unsqueeze(0))
     
+    plt.figure()
+    plt.plot(sample_output.numpy(), label='Predicted')
+    plt.plot(sample_target.numpy(), label='Ground Truth')
+    plt.legend()
+    plt.savefig('training_curve_test.png')
+
+    return avg_loss
 
 
 if __name__ == '__main__':
     #建立数据集
     file_prefix = "coo_dataset"
     num_samples = 40
-    
     coo_dataset = COODataset(file_prefix, num_samples)
-    # torch_dataset = TensorDataset(coo_dataset , coo_dataset.targets)
 
-    # data_loader = DataLoader(coo_dataset, batch_size=1, shuffle=True)
+    #划分数据集
+    train_size = int(0.7 * len(coo_dataset))
+    val_size = int(0.15 * len(coo_dataset))
+    test_size = len(coo_dataset) - train_size - val_size
+
     # 从 COODataset 中获取 COO 矩阵和目标值
     COO = [coo_dataset[i][0] for i in range(len(coo_dataset))]
     target = [coo_dataset[i][1] for i in range(len(coo_dataset))]
-    # torch_dataset = TensorDataset(*coo_dataset)
 
-    # 将 COO 矩阵和目标值绑定在一起
-    # torch_dataset = TensorDataset(*COO, *target)
+    #matrix & t
     torch_dataset = TensorDataset(torch.stack(COO), torch.stack(target))
-    data_loader = DataLoader(torch_dataset, batch_size=1, shuffle=True)
 
+    train_dataset, val_dataset, test_dataset = random_split(torch_dataset, [train_size, val_size, test_size])
+
+    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+    val_loader   = DataLoader(val_dataset, batch_size=1, shuffle=False)
+    test_loader  = DataLoader(test_dataset, batch_size=1, shuffle=False)
     #创建网络
     model = Cnn(out_node=1)
     # 损失函数和优化器
@@ -112,27 +178,14 @@ if __name__ == '__main__':
     optimizer = optim.SGD(model.parameters(), lr=0.01)
         
     # 模型训练
-    losses = []
-    #train model
-    for epoch in range(10):
-        for _, (coo_matrix, target) in enumerate(data_loader):
-            input_data = coo_matrix
-            optimizer.zero_grad()
-            output = model(input_data)
-            loss = criterion(output, target)
-            loss.backward()
-            optimizer.step()
-        losses.append(loss.item())
-        print(f"Epoch {epoch + 1}/{100}, Loss: {loss.item()}")
-    torch.save(model.state_dict(), 'AMG_trained_model.pth')  # 保存模型状态
+    # train_model(model, train_loader, criterion, optimizer, num_epochs=10)
 
-    # 绘制变化曲线
-    plt.plot(losses, label='Training Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
+    loaded_net = Cnn()
+    load_model(loaded_net, 'AMG_trained_model.pth')
+    # 在验证集上评估模型
+    val_loss = validate(model, val_loader, criterion)
+    print(f"Average Loss on val_loss Set: {val_loss}")
 
-    # 保存绘图
-    plt.savefig('training_curve.png')
-    # loaded_net = Cnn()
-    # load_model(loaded_net, 'AMG_trained_model.pth')
+    # 在测试集上评估模型
+    test_loss = test(model, test_loader, criterion)
+    print(f"Average Loss on Test Set: {test_loss}")
