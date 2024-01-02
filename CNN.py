@@ -94,7 +94,7 @@ def generate_dense_matrix(density=0.4):
 if __name__ == '__main__':
     #建立数据集
     file_prefix = "coo_dataset"
-    num_samples = 100
+    num_samples = 5
     
     coo_dataset = COODataset(file_prefix, num_samples)
     # torch_dataset = TensorDataset(coo_dataset , coo_dataset.targets)
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     # 模型训练
     losses = []
     
-    for epoch in range(10000):
+    for epoch in range(1000):
         for _, (coo_matrix, target) in enumerate(data_loader):
             input_data = coo_matrix
             optimizer.zero_grad()

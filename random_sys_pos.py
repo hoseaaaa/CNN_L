@@ -47,7 +47,7 @@ clear_directory("./csr_dataset")
 for i in range(1, 41):
     coo_filename = f"./coo_dataset/{i}.txt"
     csr_filename = f"./csr_dataset/{i}.txt"
-    size = np.random.randint(10000, 10001)
+    size = np.random.randint(28, 29)
     density = np.random.uniform(0.1, 0.3)
     generate_sparse_matrices(coo_filename, csr_filename, size, density)
     print(f"Files saved successfully: {coo_filename}, {csr_filename}")
