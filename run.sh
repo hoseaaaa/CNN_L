@@ -4,11 +4,15 @@
 # $3: m
 # $4: num matrix  
 # creat data 
+set-e
+m=$3
+num=$4
 if [ "$1" == "creat" ]; then
     echo "creat  dataset "
     cd creat_data;
-    ./run_dataset.sh $2 $3 $4  ;
-    cd ../src
+    ./run_dataset.sh $2 $m $num  ;
+    ./random_target.sh $2 $num  ;
+    cd "../src"
 else
     echo "not creat dataset "
     cd src
