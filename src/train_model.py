@@ -1,3 +1,8 @@
+import torch
+import torch.nn as nn
+
+import matplotlib.pyplot as plt
+from torch.utils.data import Dataset, DataLoader
 
 def train_model(model, train_loader, criterion, optimizer, num_epochs=100):
     losses = []
@@ -16,11 +21,11 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=100):
         # 保存模型状态
         # torch.save(model.state_dict(), f'AMG_trained_model_epoch_{epoch + 1}.pth')
     # 保存模型状态
-    torch.save(model.state_dict(), 'AMG_trained_model.pth')  # 保存模型状态
+    torch.save(model.state_dict(), '../build/AMG_trained_model.pth')  # 保存模型状态
     #绘制变化曲线
     plt.plot(losses, label='Training Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.legend()
     # 保存绘图
-    plt.savefig('training_curve.png')
+    plt.savefig('../build/training_curve.png')

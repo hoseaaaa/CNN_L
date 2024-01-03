@@ -1,13 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
-
-import random
-
-from torch.utils.data import Dataset, DataLoader,random_split
-from torch.utils.data import TensorDataset
-import matplotlib.pyplot as plt
-
 
 class Cnn(nn.Module):
     def __init__(self, out_node=1):
@@ -24,28 +16,29 @@ class Cnn(nn.Module):
 
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
         # 新增两个全连接层的输入节点数
-        self.node_sita = 1   
-        self.node_relax = 1 
-        self.node_ln_n = 1   
-        self.node_ln_nnz = 1  
+        # self.node_sita = 1   
+        # self.node_relax = 1 
+        # self.node_ln_n = 1   
+        # self.node_ln_nnz = 1  
 
         self.fc = nn.Sequential(
-            nn.Linear(14, 200),
+            nn.Linear(10, 200),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(200, out_node)
         )
 
-    def forward(self,x,sita,relax,ln_n,ln_nnz):
+    def forward(self,x):
+    # def forward(self,x,sita,relax,ln_n,ln_nnz):
         # x = self.embedding(x)
         out = self.conv(x)
         out = self.adaptive_pool(out)
         out = out.view(out.size(0), -1)
-        #添加新节点
-        m_data = torch.tensor(m, dtype=torch.float32).unsqueeze(0)
-        n_data = torch.tensor(n, dtype=torch.float32).unsqueeze(0)
-        b_data = torch.tensor(b, dtype=torch.float32).unsqueeze(0)
-        out = torch.cat((out, m_data, n_data, b_data), dim=1)
+        # #添加新节点
+        # m_data = torch.tensor(m, dtype=torch.float32).unsqueeze(0)
+        # n_data = torch.tensor(n, dtype=torch.float32).unsqueeze(0)
+        # b_data = torch.tensor(b, dtype=torch.float32).unsqueeze(0)
+        # out = torch.cat((out, m_data, n_data, b_data), dim=1)
         out = self.fc(out)
         return out
     

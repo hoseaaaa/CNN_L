@@ -3,16 +3,26 @@ import torch.nn as nn
 import torch.optim as optim
 
 import random
+import os
 
 from torch.utils.data import Dataset, DataLoader,random_split
 from torch.utils.data import TensorDataset
 
 class COODataset(Dataset):
-    def __init__(self, file_prefix, num_samples):
+    def __init__(self, file_prefix):
         self.file_prefix = file_prefix
-        self.num_samples = num_samples
-        self.target_filename = f"./target.txt"
+        self.b_file_prefix =  file_prefix.replace("coo_dataset", "target")
+        self.file_list = self.get_file_list()
+        self.num_samples = len(self.file_list)
+        # self.num_samples = num_samples
+        self.target_filename = f"./{self.b_file_prefix}/target.txt"
         self.targets = self.load_targets()
+
+    def get_file_list(self):
+        # Get a list of all .txt files in the specified directory
+        file_list = [filename for filename in os.listdir(self.file_prefix) if os.path.isfile(os.path.join(self.file_prefix, filename)) and filename.endswith(".txt")]
+        return file_list
+
     def load_targets(self):
         targets = []
         with open(self.target_filename, 'r') as target_file:

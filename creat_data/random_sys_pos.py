@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from scipy.sparse import coo_matrix, csr_matrix
+import sys
 
 def generate_symmetric_positive_definite_matrix(size):
     A = np.random.rand(size, size)
@@ -39,15 +40,22 @@ def generate_sparse_matrices(filename_coo, filename_csr, size, density):
         file.write(" ".join(map(str, csr_matrix_.indices)) + "\n")
         file.write(" ".join(map(str, csr_matrix_.data)) + "\n")
 
+
+coo_dir=str(sys.argv[1])
+csr_dir=str(sys.argv[4])
+
+m = int(sys.argv[2])
+num = int(sys.argv[3])
 # Clear existing files
-clear_directory("./coo_dataset")
-clear_directory("./csr_dataset")
+
+clear_directory(coo_dir)
+clear_directory(csr_dir)
 
 # Generate new files
-for i in range(1, 21):
-    coo_filename = f"./coo_dataset/{i}.txt"
-    csr_filename = f"./csr_dataset/{i}.txt"
-    size = np.random.randint(1000, 2001)
+for i in range(1, num+1):
+    coo_filename = f"{coo_dir}/{i}.txt"
+    csr_filename = f"{csr_dir}/{i}.txt"
+    size = np.random.randint(m, m+1)
     density = np.random.uniform(0.1, 0.2)
     generate_sparse_matrices(coo_filename, csr_filename, size, density)
-    print(f"Files saved successfully: {coo_filename}, {csr_filename}")
+print(f"Files saved successfully: {coo_dir}, {csr_dir}  m: {m}   num : {num}" )
