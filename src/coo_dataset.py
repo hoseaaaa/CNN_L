@@ -11,24 +11,36 @@ from torch.utils.data import TensorDataset
 class COODataset(Dataset):
     def __init__(self, file_prefix):
         self.file_prefix = file_prefix
-        self.b_file_prefix =  file_prefix.replace("coo_dataset", "target")
+
+        self.t_file_prefix =  file_prefix.replace("coo_dataset", "target")
+        self.scalar_file_prefix = file_prefix.replace("coo_dataset", "x_dataset")
+        self.target_file = f"./{self.t_file_prefix}/target.txt"
+        self.scalar_file_x1 = f"./{self.scalar_file_prefix}/lnn.txt"
+        self.scalar_file_x2 = f"./{self.scalar_file_prefix}/lnnnz.txt"
+        self.scalar_file_x3 = f"./{self.scalar_file_prefix}/relax.txt"
+        self.scalar_file_x4 = f"./{self.scalar_file_prefix}/sita.txt"
+
         self.file_list = self.get_file_list()
         self.num_samples = len(self.file_list)
-        # self.num_samples = num_samples
-        self.target_filename = f"./{self.b_file_prefix}/target.txt"
-        self.targets = self.load_targets()
+
+        self.targets = self.load_scalar(self.target_file)
+
+        self.scalar_x1 = self.load_scalar(self.scalar_file_x1)
+        self.scalar_x2 = self.load_scalar(self.scalar_file_x2)
+        self.scalar_x3 = self.load_scalar(self.scalar_file_x3)
+        self.scalar_x4 = self.load_scalar(self.scalar_file_x4)
 
     def get_file_list(self):
         # Get a list of all .txt files in the specified directory
         file_list = [filename for filename in os.listdir(self.file_prefix) if os.path.isfile(os.path.join(self.file_prefix, filename)) and filename.endswith(".txt")]
         return file_list
 
-    def load_targets(self):
-        targets = []
-        with open(self.target_filename, 'r') as target_file:
-            for line in target_file:
-                targets.extend(map(float, line.split()))
-        return targets
+    def load_scalar(self,filename):
+        data = []
+        with open(filename, 'r') as file:
+            for line in file:
+                data.extend(map(float, line.split()))
+        return data
 
     def __len__(self):
         return self.num_samples
@@ -37,7 +49,11 @@ class COODataset(Dataset):
         filename = f"./{self.file_prefix}/{idx + 1}.txt"
         coo_matrix = self.load_coo_matrix(filename)
         target = torch.tensor(self.targets[idx], dtype=torch.float32).unsqueeze(0)
-        return coo_matrix, target
+        x1 = torch.tensor(self.scalar_x1[idx], dtype=torch.float32).unsqueeze(0)
+        x2 = torch.tensor(self.scalar_x2[idx], dtype=torch.float32).unsqueeze(0)
+        x3 = torch.tensor(self.scalar_x3[idx], dtype=torch.float32).unsqueeze(0)
+        x4 = torch.tensor(self.scalar_x4[idx], dtype=torch.float32).unsqueeze(0)
+        return coo_matrix, target, x1, x2, x3, x4
 
     def load_coo_matrix(self, filename):
         with open(filename, 'r') as file:

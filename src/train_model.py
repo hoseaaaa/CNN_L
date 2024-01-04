@@ -7,10 +7,10 @@ from torch.utils.data import Dataset, DataLoader
 def train_model(model, train_loader, criterion, optimizer, num_epochs=100):
     losses = []
     for epoch in range(num_epochs):
-        for _, (coo_matrix, target) in enumerate(train_loader):
+        for _, (coo_matrix, target,data_x1,data_x2,data_x3,data_x4) in enumerate(train_loader):
             input_data = coo_matrix
             optimizer.zero_grad()
-            output = model(input_data)
+            output = model(input_data,data_x1,data_x2,data_x3,data_x4)
             loss = criterion(output, target)
             loss.backward()
             optimizer.step()
