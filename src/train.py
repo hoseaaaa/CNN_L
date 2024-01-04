@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import sys
 
-from load_function import *
 import train_model
 from coo_dataset import COODataset
 from torch.utils.data import TensorDataset
@@ -32,4 +31,4 @@ if __name__ == '__main__':
     criterion = nn.MSELoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01)
     # 模型训练
-    train_model.train_model(model, train_data, criterion, optimizer, num_epochs=10)
+    train_model.train_model(model, train_data, criterion, optimizer, num_epochs=1000)

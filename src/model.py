@@ -6,18 +6,49 @@ class Cnn(nn.Module):
         super(Cnn, self).__init__()
         # self.embedding = nn.EmbeddingBag.from_pretrained(30, 10, sparse=True)
         self.conv = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=10, kernel_size=3, stride=1),
+            nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(16),
             nn.ReLU(True),
-            nn.MaxPool2d(kernel_size=2, stride=1),
-            nn.Conv2d(in_channels=10, out_channels=10, kernel_size=3, stride=1),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(32),
             nn.ReLU(True),
-            nn.MaxPool2d(kernel_size=2, stride=1),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+
+            # Additional convolutional layers
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+
+            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(True),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+
         )
 
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.fc = nn.Sequential(
-            nn.Linear(14, 200),
+            nn.Linear(516, 400),
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=0.5),
+            nn.Linear(400, 300),
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=0.5),
+            nn.Linear(300, 200),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(200, out_node)
